@@ -12,6 +12,13 @@ npm install
 
 Sample Requests is placed under `/check`.
 
+```shell
+# Send Sample Request to local server.
+# * You need to run serverless-offline in background.
+#   See the next section.
+npm run test:rest-api
+```
+
 ### local
 
 ```shell
