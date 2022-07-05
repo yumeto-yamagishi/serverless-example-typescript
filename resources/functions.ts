@@ -1,6 +1,6 @@
 export default {
   createList: {
-    handler: "handler.createList",
+    handler: "src/actions/handler.createList",
     events: [
       {
         http: {
@@ -16,7 +16,7 @@ export default {
     ],
   },
   deleteList: {
-    handler: "handler.deleteList",
+    handler: "src/actions/handler.deleteList",
     events: [
       {
         http: {
@@ -28,7 +28,7 @@ export default {
     ],
   },
   getList: {
-    handler: "handler.getList",
+    handler: "src/actions/handler.getList",
     events: [
       {
         http: {
@@ -40,7 +40,7 @@ export default {
     ],
   },
   updateList: {
-    handler: "handler.updateList",
+    handler: "src/actions/handler.updateList",
     events: [
       {
         http: {
@@ -52,7 +52,7 @@ export default {
     ],
   },
   createTask: {
-    handler: "handler.createTask",
+    handler: "src/actions/handler.createTask",
     events: [
       {
         http: {
@@ -64,7 +64,7 @@ export default {
     ],
   },
   deleteTask: {
-    handler: "handler.deleteTask",
+    handler: "src/actions/handler.deleteTask",
     events: [
       {
         http: {
@@ -76,7 +76,7 @@ export default {
     ],
   },
   getTask: {
-    handler: "handler.getTask",
+    handler: "src/actions/handler.getTask",
     events: [
       {
         http: {
@@ -88,7 +88,7 @@ export default {
     ],
   },
   updateTask: {
-    handler: "handler.updateTask",
+    handler: "src/actions/handler.updateTask",
     events: [
       {
         http: {
@@ -100,7 +100,7 @@ export default {
     ],
   },
   handleApiGatewayLog: {
-    handler: "ops-handler.handleApiGatewayLog",
+    handler: "src/ops-handler.handleApiGatewayLog",
     events: [
       {
         subscriptionFilter: {
