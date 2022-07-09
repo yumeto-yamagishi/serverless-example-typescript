@@ -6,15 +6,15 @@ import { StatusCode } from "../../enums/status-code.enum";
 import ResponseModel from "../../models/response.model";
 import DatabaseService, { UpdateItem } from "../../services/database.service";
 import { RequestHandler, middyfy } from "../../utils/lambda-handler";
-import { databaseTables, validateRequest } from "../../utils/util";
+import { databaseTables } from "../../utils/util";
 
 const updateListHandler: RequestHandler<{ listId: string; name: string; }> = async (body) => {
   const databaseService = new DatabaseService();
   const { listTable } = databaseTables();
   const { listId, name } = body;
 
+  // validate with DB data
   await Promise.all([
-    validateRequest(body, requestConstraints),
     databaseService.getItem({ key: listId, tableName: listTable }),
   ]);
 
@@ -41,4 +41,7 @@ const updateListHandler: RequestHandler<{ listId: string; name: string; }> = asy
   );
 };
 
-export const updateList = middyfy(updateListHandler, { unhandledErrorMessage: ResponseMessage.UPDATE_LIST_FAIL });
+export const updateList = middyfy(updateListHandler, {
+  constraints: { body: requestConstraints },
+  unhandledErrorMessage: ResponseMessage.UPDATE_LIST_FAIL
+});

@@ -2,9 +2,11 @@ import validate from "validate.js/validate";
 
 import ResponseModel from "../models/response.model";
 
+export type Constraints = { [key in string]: unknown };
+
 export const validateRequest = <INPUT>(
   values: INPUT,
-  constraints: { [key in string]: unknown }
+  constraints: Constraints
 ): Promise<INPUT> => {
   return new Promise<INPUT>((resolve, reject) => {
     const validation = validate(values, constraints);

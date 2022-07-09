@@ -1,12 +1,12 @@
 import "source-map-support/register";
 
+import requestConstraints from "../../constraints/task/update.constraint.json";
+import { ResponseMessage } from "../../enums/response-message.enum";
+import { StatusCode } from "../../enums/status-code.enum";
 import ResponseModel from "../../models/response.model";
 import DatabaseService, { UpdateItem } from "../../services/database.service";
-import { databaseTables, validateRequest } from "../../utils/util";
-import requestConstraints from "../../constraints/task/update.constraint.json";
-import { RequestHandler, middyfy } from "../../utils/lambda-handler";
-import { StatusCode } from "../../enums/status-code.enum";
-import { ResponseMessage } from "../../enums/response-message.enum";
+import { middyfy, RequestHandler } from "../../utils/lambda-handler";
+import { databaseTables } from "../../utils/util";
 
 type UpdateTaskInput = {
   listId: string;
@@ -20,8 +20,8 @@ const updateTaskHandler: RequestHandler<UpdateTaskInput> = async (body) => {
   const { listId, taskId, completed, description } = body;
   const { listTable, tasksTable } = databaseTables();
 
+  // validate with DB data
   await Promise.all([
-    validateRequest(body, requestConstraints),
     databaseService.getItem({ key: listId, tableName: listTable }),
   ]);
   const isCompletedPresent = typeof completed !== "undefined";
@@ -67,4 +67,7 @@ const updateTaskHandler: RequestHandler<UpdateTaskInput> = async (body) => {
   }
 };
 
-export const updateTask = middyfy(updateTaskHandler, { unhandledErrorMessage: ResponseMessage.UPDATE_TASK_FAIL });
+export const updateTask = middyfy(updateTaskHandler, {
+  constraints: { body: requestConstraints },
+  unhandledErrorMessage: ResponseMessage.UPDATE_TASK_FAIL
+});

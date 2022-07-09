@@ -5,14 +5,13 @@ import { ResponseMessage } from "../../enums/response-message.enum";
 import { StatusCode } from "../../enums/status-code.enum";
 import ResponseModel from "../../models/response.model";
 import DatabaseService from "../../services/database.service";
-import { RequestHandler, middyfy } from "../../utils/lambda-handler";
-import { databaseTables, validateRequest } from "../../utils/util";
+import { middyfy, RequestHandler } from "../../utils/lambda-handler";
+import { databaseTables } from "../../utils/util";
 
 const getTaskHandler: RequestHandler<never> = async (_body, queryParams) => {
   const databaseService = new DatabaseService();
   const { tasksTable } = databaseTables();
 
-  await validateRequest(queryParams, requestConstraints);
   const { taskId, listId } = queryParams;
   const data = await databaseService.getItem({
     key: taskId!,
@@ -27,4 +26,7 @@ const getTaskHandler: RequestHandler<never> = async (_body, queryParams) => {
   );
 };
 
-export const getTask = middyfy(getTaskHandler, { unhandledErrorMessage: ResponseMessage.GET_TASK_FAIL });
+export const getTask = middyfy(getTaskHandler, {
+  constraints: { query: requestConstraints },
+  unhandledErrorMessage: ResponseMessage.GET_TASK_FAIL
+});

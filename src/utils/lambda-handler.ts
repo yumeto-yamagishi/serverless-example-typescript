@@ -9,6 +9,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from "aws-lambda
 import { ResponseMessage } from "../enums/response-message.enum";
 import { StatusCode } from "../enums/status-code.enum";
 import ResponseModel from "../models/response.model";
+import { validateRequest, Constraints } from "../utils/util";
 
 export type RequestHandler<REQ> = (
   body: REQ,
@@ -22,7 +23,10 @@ type APIGatewayProxyEventHandler = (
   context: Context
 ) => Promise<APIGatewayProxyResult>;
 
-type Option = { unhandledErrorMessage?: string };
+type Option = {
+  constraints?: { body?: Constraints, query?: Constraints },
+  unhandledErrorMessage?: string
+};
 
 export const middyfy = <REQ = unknown>(
   handler: RequestHandler<REQ>,
@@ -49,19 +53,26 @@ const wrapToApiGatewayEventHandler = <REQ>(
     // Already parsed from JsonString to object by using middyJsonBodyParser()
     const requestData = event.body as unknown as REQ;
     // Already normalized by using middyEventNormalizer()
-    const params = event.queryStringParameters ?? {};
+    const queryParams = event.queryStringParameters ?? {};
 
     let response: ResponseModel;
     try {
-      response = await handler(requestData, params, context);
+      // TODO バリデーションを統合すること
+      if (opt.constraints?.body) {
+        await validateRequest(requestData, opt.constraints?.body)
+      }
+      if (opt.constraints?.query) {
+        await validateRequest(queryParams, opt.constraints?.query)
+      }
+      response = await handler(requestData, queryParams, context);
     } catch (error: any) {
       response = error instanceof ResponseModel
         ? error
         : new ResponseModel(
-            {},
-            StatusCode.ERROR,
-            opt.unhandledErrorMessage || ResponseMessage.ERROR
-          );
+          {},
+          StatusCode.ERROR,
+          opt.unhandledErrorMessage || ResponseMessage.ERROR
+        );
     }
 
     // convert ResponseModel to APIGatewayProxyResult

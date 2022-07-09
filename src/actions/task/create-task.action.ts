@@ -6,15 +6,15 @@ import { StatusCode } from "../../enums/status-code.enum";
 import ResponseModel from "../../models/response.model";
 import TaskModel, { ITaskInterface } from "../../models/task.model";
 import DatabaseService, { PutItem } from "../../services/database.service";
-import { RequestHandler, middyfy } from "../../utils/lambda-handler";
-import { databaseTables, validateRequest } from "../../utils/util";
+import { middyfy, RequestHandler } from "../../utils/lambda-handler";
+import { databaseTables } from "../../utils/util";
 
 const createTaskHandler: RequestHandler<ITaskInterface> = async (body) => {
   const databaseService = new DatabaseService();
   const { listTable, tasksTable } = databaseTables();
 
+  // validate with DB data
   await Promise.all([
-    validateRequest(body, requestConstraints),
     databaseService.getItem({
       key: body.listId,
       tableName: listTable,
@@ -42,4 +42,7 @@ const createTaskHandler: RequestHandler<ITaskInterface> = async (body) => {
   );
 };
 
-export const createTask = middyfy(createTaskHandler, { unhandledErrorMessage: ResponseMessage.CREATE_TASK_FAIL });
+export const createTask = middyfy(createTaskHandler, {
+  constraints: { body: requestConstraints },
+  unhandledErrorMessage: ResponseMessage.CREATE_TASK_FAIL
+});

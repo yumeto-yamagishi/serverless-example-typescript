@@ -7,10 +7,9 @@ import ListModel, { IListInterface } from "../../models/list.model";
 import ResponseModel from "../../models/response.model";
 import DatabaseService, { PutItem } from "../../services/database.service";
 import { RequestHandler, middyfy } from "../../utils/lambda-handler";
-import { databaseTables, validateRequest } from "../../utils/util";
+import { databaseTables } from "../../utils/util";
 
 const createListHandler: RequestHandler<IListInterface> = async (body) => {
-  await validateRequest(body, requestConstraints);
   const databaseService = new DatabaseService();
 
   const listModel = new ListModel(body);
@@ -32,4 +31,7 @@ const createListHandler: RequestHandler<IListInterface> = async (body) => {
   );
 };
 
-export const createList = middyfy(createListHandler, { unhandledErrorMessage: ResponseMessage.CREATE_LIST_FAIL });
+export const createList = middyfy(createListHandler, {
+  constraints: {body: requestConstraints},
+  unhandledErrorMessage: ResponseMessage.CREATE_LIST_FAIL
+});

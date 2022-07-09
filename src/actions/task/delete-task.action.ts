@@ -5,14 +5,13 @@ import { ResponseMessage } from "../../enums/response-message.enum";
 import { StatusCode } from "../../enums/status-code.enum";
 import ResponseModel from "../../models/response.model";
 import DatabaseService, { DeleteItem } from "../../services/database.service";
-import { RequestHandler, middyfy } from "../../utils/lambda-handler";
-import { databaseTables, validateRequest } from "../../utils/util";
+import { middyfy, RequestHandler } from "../../utils/lambda-handler";
+import { databaseTables } from "../../utils/util";
 
 const deleteTaskHandler: RequestHandler<never> = async (_body, queryParams) => {
   const databaseService = new DatabaseService();
   const { tasksTable } = databaseTables();
 
-  await validateRequest(queryParams, requestConstraints);
   const { taskId, listId } = queryParams;
   const existsItem = await databaseService.existsItem({
     key: taskId!,
@@ -42,4 +41,7 @@ const deleteTaskHandler: RequestHandler<never> = async (_body, queryParams) => {
   );
 };
 
-export const deleteTask = middyfy(deleteTaskHandler, { unhandledErrorMessage: ResponseMessage.DELETE_TASK_FAIL });
+export const deleteTask = middyfy(deleteTaskHandler, {
+  constraints: { query: requestConstraints },
+  unhandledErrorMessage: ResponseMessage.DELETE_TASK_FAIL
+});

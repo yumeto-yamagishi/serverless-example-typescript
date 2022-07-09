@@ -6,13 +6,12 @@ import { StatusCode } from "../../enums/status-code.enum";
 import ResponseModel from "../../models/response.model";
 import DatabaseService, { QueryItem } from "../../services/database.service";
 import { RequestHandler, middyfy } from "../../utils/lambda-handler";
-import { databaseTables, validateRequest } from "../../utils/util";
+import { databaseTables } from "../../utils/util";
 
 const getListHandler: RequestHandler<never> = async (_body, queryParams) => {
   const databaseService = new DatabaseService();
   const { listTable, tasksTable } = databaseTables();
 
-  await validateRequest(queryParams, requestConstraints);
   const { listId } = queryParams;
   const data = await databaseService.getItem({
     key: listId!,
@@ -50,4 +49,7 @@ const getListHandler: RequestHandler<never> = async (_body, queryParams) => {
   );
 };
 
-export const getList = middyfy(getListHandler, { unhandledErrorMessage: ResponseMessage.GET_LIST_FAIL });
+export const getList = middyfy(getListHandler, {
+  constraints: { query: requestConstraints },
+  unhandledErrorMessage: ResponseMessage.GET_LIST_FAIL
+});

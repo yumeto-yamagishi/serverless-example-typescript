@@ -8,18 +8,16 @@ import DatabaseService, {
   DeleteItem,
   QueryItem
 } from "../../services/database.service";
-import { RequestHandler, middyfy } from "../../utils/lambda-handler";
+import { middyfy, RequestHandler } from "../../utils/lambda-handler";
 import {
   createChunks,
-  databaseTables,
-  validateRequest
+  databaseTables
 } from "../../utils/util";
 
 const deleteListHandler: RequestHandler<never> = async (_body, queryParams) => {
   const { listTable, tasksTable } = databaseTables();
   const databaseService = new DatabaseService();
 
-  await validateRequest(queryParams, requestConstraints);
   const { listId } = queryParams;
 
   // check item exists
@@ -82,4 +80,7 @@ const deleteListHandler: RequestHandler<never> = async (_body, queryParams) => {
   );
 };
 
-export const deleteList = middyfy(deleteListHandler, { unhandledErrorMessage: ResponseMessage.DELETE_LIST_FAIL });
+export const deleteList = middyfy(deleteListHandler, {
+  constraints: { query: requestConstraints },
+  unhandledErrorMessage: ResponseMessage.DELETE_LIST_FAIL
+});

@@ -1,7 +1,19 @@
+
+### test POST /list with validation failed
+POST {{baseUrl}}/list
+Content-Type: application/json
+{}
+
+> {%
+client.test("status=400", function () {
+  client.assert(response.status === 400, "status code error")
+  client.assert(response.body.data.validation.name[0] == "Name can't be blank")
+})
+%}
+
 ### test POST /list
 POST {{baseUrl}}/list
 Content-Type: application/json
-
 {
   "name": "test"
 }
@@ -13,19 +25,39 @@ client.test("status=201", function () {
 })
 %}
 
+HTTP/1.1 400  - Bad Request
+access-control-allow-credentials: true
+content-type: application/json; charset=utf-8
+vary: origin
+access-control-expose-headers: WWW-Authenticate,Server-Authorization
+cache-control: no-cache
+content-length: 119
+date: Sat, 09 Jul 2022 04:44:04 GMT
+connection: close
+
+HTTP/1.1 201  - Created
+access-control-allow-credentials: true
+content-type: application/json; charset=utf-8
+vary: origin
+access-control-expose-headers: WWW-Authenticate,Server-Authorization
+cache-control: no-cache
+content-length: 121
+date: Sat, 09 Jul 2022 04:44:04 GMT
+connection: close
+
+
 ### test GET /list
 GET {{baseUrl}}/list?listId={{listId}}
-
 > {%
 client.test("status=200", function () {
   client.assert(response.status === 200, "status code error")
 })
 %}
 
+
 ### test PUT /list
 PUT {{baseUrl}}/list
 Content-Type: application/json
-
 {"name":"test-update","listId":"{{listId}}"}
 
 > {%
@@ -34,9 +66,9 @@ client.test("status=200", function() {
 })
 %}
 
+
 ### test POST /task
 POST {{baseUrl}}/task
-
 {
   "listId":"{{listId}}",
   "description":"test-description",
@@ -50,18 +82,18 @@ client.test("status=201", function () {
 })
  %}
 
+
 ### test GET /task
 GET {{baseUrl}}/task?listId={{listId}}&taskId={{taskId}}
-
 > {%
 client.test("status=200", function () {
   client.assert(response.status === 200, "status code error")
 })
  %}
 
+
 ### test PUT /task
 PUT {{baseUrl}}/task
-
 {
   "listId":"{{listId}}",
   "taskId":"{{taskId}}",
@@ -75,9 +107,9 @@ client.test("status=200", function () {
 })
  %}
 
+
 ### test DELETE /task
 DELETE {{baseUrl}}/task?listId={{listId}}&taskId={{taskId}}
-
 {
   "listId":"{{listId}}",
   "taskId":"{{taskId}}"
@@ -89,12 +121,11 @@ client.test("status=204", function () {
 })
  %}
 
+
 ### test DELETE /list
 DELETE {{baseUrl}}/list?listId={{listId}}
-
 > {%
 client.test("status=204", function () {
   client.assert(response.status === 204, "status code error")
 })
 %}
-
