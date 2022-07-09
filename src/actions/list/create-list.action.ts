@@ -32,4 +32,4 @@ const createListHandler: RequestHandler<IListInterface> = async (body) => {
   );
 };
 
-export const createList = middyfy(createListHandler, ResponseMessage.CREATE_LIST_FAIL);
+export const createList = middyfy(createListHandler, { unhandledErrorMessage: ResponseMessage.CREATE_LIST_FAIL });

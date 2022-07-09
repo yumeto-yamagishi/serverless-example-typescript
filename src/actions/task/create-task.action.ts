@@ -42,4 +42,4 @@ const createTaskHandler: RequestHandler<ITaskInterface> = async (body) => {
   );
 };
 
-export const createTask = middyfy(createTaskHandler, ResponseMessage.CREATE_TASK_FAIL);
+export const createTask = middyfy(createTaskHandler, { unhandledErrorMessage: ResponseMessage.CREATE_TASK_FAIL });

@@ -67,4 +67,4 @@ const updateTaskHandler: RequestHandler<UpdateTaskInput> = async (body) => {
   }
 };
 
-export const updateTask = middyfy(updateTaskHandler, ResponseMessage.UPDATE_TASK_FAIL);
+export const updateTask = middyfy(updateTaskHandler, { unhandledErrorMessage: ResponseMessage.UPDATE_TASK_FAIL });

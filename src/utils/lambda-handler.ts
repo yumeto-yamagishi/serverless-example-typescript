@@ -22,12 +22,14 @@ type APIGatewayProxyEventHandler = (
   context: Context
 ) => Promise<APIGatewayProxyResult>;
 
+type Option = { unhandledErrorMessage?: string };
+
 export const middyfy = <REQ = unknown>(
   handler: RequestHandler<REQ>,
-  defaultErrorMessage: string = ResponseMessage.ERROR
+  opt: Option = {}
 ): APIGatewayProxyEventHandler => {
 
-  const apiGatewayEventHandler = wrapToApiGatewayEventHandler(handler, defaultErrorMessage);
+  const apiGatewayEventHandler = wrapToApiGatewayEventHandler(handler, opt);
 
   return middy(apiGatewayEventHandler)
     .use(middyEventNormalizer())
@@ -41,7 +43,7 @@ export const middyfy = <REQ = unknown>(
 
 const wrapToApiGatewayEventHandler = <REQ>(
   handler: RequestHandler<REQ>,
-  defaultErrorMessage: string = ResponseMessage.ERROR
+  opt: Option
 ): APIGatewayProxyEventHandler => {
   return async function (event, context) {
     // Already parsed from JsonString to object by using middyJsonBodyParser()
@@ -55,7 +57,11 @@ const wrapToApiGatewayEventHandler = <REQ>(
     } catch (error: any) {
       response = error instanceof ResponseModel
         ? error
-        : new ResponseModel({}, StatusCode.ERROR, defaultErrorMessage)
+        : new ResponseModel(
+            {},
+            StatusCode.ERROR,
+            opt.unhandledErrorMessage || ResponseMessage.ERROR
+          );
     }
 
     // convert ResponseModel to APIGatewayProxyResult

@@ -42,4 +42,4 @@ const deleteTaskHandler: RequestHandler<never> = async (_body, queryParams) => {
   );
 };
 
-export const deleteTask = middyfy(deleteTaskHandler, ResponseMessage.DELETE_TASK_FAIL);
+export const deleteTask = middyfy(deleteTaskHandler, { unhandledErrorMessage: ResponseMessage.DELETE_TASK_FAIL });

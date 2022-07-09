@@ -41,4 +41,4 @@ const updateListHandler: RequestHandler<{ listId: string; name: string; }> = asy
   );
 };
 
-export const updateList = middyfy(updateListHandler, ResponseMessage.UPDATE_LIST_FAIL);
+export const updateList = middyfy(updateListHandler, { unhandledErrorMessage: ResponseMessage.UPDATE_LIST_FAIL });

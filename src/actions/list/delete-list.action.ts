@@ -82,4 +82,4 @@ const deleteListHandler: RequestHandler<never> = async (_body, queryParams) => {
   );
 };
 
-export const deleteList = middyfy(deleteListHandler, ResponseMessage.DELETE_LIST_FAIL);
+export const deleteList = middyfy(deleteListHandler, { unhandledErrorMessage: ResponseMessage.DELETE_LIST_FAIL });

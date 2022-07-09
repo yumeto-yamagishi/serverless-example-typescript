@@ -27,4 +27,4 @@ const getTaskHandler: RequestHandler<never> = async (_body, queryParams) => {
   );
 };
 
-export const getTask = middyfy(getTaskHandler, ResponseMessage.GET_TASK_FAIL);
+export const getTask = middyfy(getTaskHandler, { unhandledErrorMessage: ResponseMessage.GET_TASK_FAIL });

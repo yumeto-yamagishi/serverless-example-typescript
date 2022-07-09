@@ -50,4 +50,4 @@ const getListHandler: RequestHandler<never> = async (_body, queryParams) => {
   );
 };
 
-export const getList = middyfy(getListHandler, ResponseMessage.GET_LIST_FAIL);
+export const getList = middyfy(getListHandler, { unhandledErrorMessage: ResponseMessage.GET_LIST_FAIL });
