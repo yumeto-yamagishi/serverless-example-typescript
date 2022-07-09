@@ -1,9 +1,15 @@
-import { APIGatewayEvent, APIGatewayProxyResult, Context } from "aws-lambda";
-import ResponseModel from "src/models/response.model";
+import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from "aws-lambda";
+import ResponseModel from "../models/response.model";
 import "source-map-support/register";
 
+import middy from "@middy/core"
+import middyJsonBodyParser from "@middy/http-json-body-parser"
+import middyHeaderNormalizer from "@middy/http-header-normalizer"
+import middyEventNormalizer from "@middy/http-event-normalizer"
+import middyCors from "@middy/http-cors"
+
 export type LambdaHandler = (
-  event: APIGatewayEvent,
+  event: APIGatewayProxyEvent,
   context: Context
 ) => Promise<APIGatewayProxyResult>;
 
@@ -18,19 +24,21 @@ export type QueryParams = Record<string, string | undefined>;
 export const wrapAsRequest = <REQ = unknown>(
   handler: RequestHandler<REQ>
 ): LambdaHandler => {
-  return async (
-    event: APIGatewayEvent,
-    context: Context
-  ): Promise<APIGatewayProxyResult> => {
-    const requestData: REQ = event.body ? JSON.parse(event.body) : undefined;
-    const params = Object.keys(event.queryStringParameters || {}).reduce(
-      (acc, cur) => {
-        acc[cur] = event.queryStringParameters?.[cur];
-        return acc;
-      },
-      {}
-    );
+  const lambdaHandler: LambdaHandler = async (event, context) => {
+    const requestData = event.body as unknown as REQ;
+    const params = event.queryStringParameters ?? {};
     const response = await handler(requestData, params, context);
-    return response.generate();
+    return {
+      statusCode: response.code,
+      body: JSON.stringify(response.body),
+    };
   };
+
+  return middy(lambdaHandler)
+    .use(middyEventNormalizer())
+    .use(middyJsonBodyParser())
+    .use(middyCors({
+      origin: "*",
+      credentials: true,
+    }))
 };

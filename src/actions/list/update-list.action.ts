@@ -1,17 +1,14 @@
 import "source-map-support/register";
 
+import requestConstraints from "../../constraints/list/update.constraint.json";
+import { ResponseMessage } from "../../enums/response-message.enum";
+import { StatusCode } from "../../enums/status-code.enum";
 import ResponseModel from "../../models/response.model";
 import DatabaseService, { UpdateItem } from "../../services/database.service";
+import { RequestHandler, wrapAsRequest } from "../../utils/lambda-handler";
 import { databaseTables, validateRequest } from "../../utils/util";
-import requestConstraints from "../../constraints/list/update.constraint.json";
-import { wrapAsRequest } from "../../utils/lambda-handler";
-import { StatusCode } from "../../enums/status-code.enum";
-import { ResponseMessage } from "../../enums/response-message.enum";
 
-const updateListHandler = async (body: {
-  listId: string;
-  name: string;
-}): Promise<ResponseModel> => {
+const updateListHandler: RequestHandler<{ listId: string; name: string; }> = async (body) => {
   const databaseService = new DatabaseService();
   const { listTable } = databaseTables();
   const { listId, name } = body;

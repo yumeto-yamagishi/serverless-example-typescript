@@ -1,24 +1,21 @@
 import "source-map-support/register";
 
+import requestConstraints from "../../constraints/list/get.constraint.json";
+import { ResponseMessage } from "../../enums/response-message.enum";
+import { StatusCode } from "../../enums/status-code.enum";
 import ResponseModel from "../../models/response.model";
 import DatabaseService, {
   DeleteItem,
-  QueryItem,
+  QueryItem
 } from "../../services/database.service";
+import { RequestHandler, wrapAsRequest } from "../../utils/lambda-handler";
 import {
   createChunks,
   databaseTables,
-  validateRequest,
+  validateRequest
 } from "../../utils/util";
-import requestConstraints from "../../constraints/list/get.constraint.json";
-import { QueryParams, wrapAsRequest } from "../../utils/lambda-handler";
-import { StatusCode } from "../../enums/status-code.enum";
-import { ResponseMessage } from "../../enums/response-message.enum";
 
-const deleteListHandler = async (
-  _body: never,
-  queryParams: QueryParams
-): Promise<ResponseModel> => {
+const deleteListHandler: RequestHandler<never> = async (_body, queryParams) => {
   const { listTable, tasksTable } = databaseTables();
   const databaseService = new DatabaseService();
 

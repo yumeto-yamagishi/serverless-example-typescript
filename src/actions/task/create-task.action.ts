@@ -1,17 +1,15 @@
 import "source-map-support/register";
 
-import TaskModel, { ITaskInterface } from "../../models/task.model";
-import ResponseModel from "../../models/response.model";
-import DatabaseService, { PutItem } from "../../services/database.service";
-import { databaseTables, validateRequest } from "../../utils/util";
 import requestConstraints from "../../constraints/task/create.constraint.json";
-import { wrapAsRequest } from "../../utils/lambda-handler";
-import { StatusCode } from "../../enums/status-code.enum";
 import { ResponseMessage } from "../../enums/response-message.enum";
+import { StatusCode } from "../../enums/status-code.enum";
+import ResponseModel from "../../models/response.model";
+import TaskModel, { ITaskInterface } from "../../models/task.model";
+import DatabaseService, { PutItem } from "../../services/database.service";
+import { RequestHandler, wrapAsRequest } from "../../utils/lambda-handler";
+import { databaseTables, validateRequest } from "../../utils/util";
 
-const createTaskHandler = async (
-  body: ITaskInterface
-): Promise<ResponseModel> => {
+const createTaskHandler: RequestHandler<ITaskInterface> = async (body) => {
   const databaseService = new DatabaseService();
   const { listTable, tasksTable } = databaseTables();
 

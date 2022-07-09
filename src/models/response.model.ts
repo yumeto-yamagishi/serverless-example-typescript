@@ -1,17 +1,9 @@
 import { Status } from "../enums/status.enum";
 
-type ResponseHeader = { [header: string]: string | number | boolean };
-
 interface IResponseBody {
   data: any;
   message: string;
   status?: string;
-}
-
-interface IResponse {
-  statusCode: number;
-  headers: ResponseHeader;
-  body: string;
 }
 
 const STATUS_MESSAGES = {
@@ -23,14 +15,8 @@ const STATUS_MESSAGES = {
   500: Status.ERROR,
 };
 
-const RESPONSE_HEADERS: ResponseHeader = {
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Credentials": true,
-};
-
 export default class ResponseModel {
-  private readonly body: IResponseBody;
+  readonly body: IResponseBody;
 
   constructor(data = {}, readonly code = 402, message = "") {
     this.body = {
@@ -52,12 +38,4 @@ export default class ResponseModel {
   get data(): any {
     return this.body.data;
   }
-
-  generate = (): IResponse => {
-    return {
-      statusCode: this.code,
-      headers: RESPONSE_HEADERS,
-      body: JSON.stringify(this.body),
-    };
-  };
 }

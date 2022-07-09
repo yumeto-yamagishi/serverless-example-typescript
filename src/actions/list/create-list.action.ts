@@ -1,19 +1,15 @@
 import "source-map-support/register";
 
+import requestConstraints from "../../constraints/list/create.constraint.json";
+import { ResponseMessage } from "../../enums/response-message.enum";
+import { StatusCode } from "../../enums/status-code.enum";
 import ListModel, { IListInterface } from "../../models/list.model";
 import ResponseModel from "../../models/response.model";
-
 import DatabaseService, { PutItem } from "../../services/database.service";
+import { RequestHandler, wrapAsRequest } from "../../utils/lambda-handler";
 import { databaseTables, validateRequest } from "../../utils/util";
 
-import requestConstraints from "../../constraints/list/create.constraint.json";
-import { wrapAsRequest } from "../../utils/lambda-handler";
-import { StatusCode } from "../../enums/status-code.enum";
-import { ResponseMessage } from "../../enums/response-message.enum";
-
-const createListHandler = async (
-  body: IListInterface
-): Promise<ResponseModel> => {
+const createListHandler: RequestHandler<IListInterface> = async (body) => {
   try {
     await validateRequest(body, requestConstraints);
     const databaseService = new DatabaseService();

@@ -4,16 +4,18 @@ import ResponseModel from "../../models/response.model";
 import DatabaseService, { UpdateItem } from "../../services/database.service";
 import { databaseTables, validateRequest } from "../../utils/util";
 import requestConstraints from "../../constraints/task/update.constraint.json";
-import { wrapAsRequest } from "../../utils/lambda-handler";
+import { RequestHandler, wrapAsRequest } from "../../utils/lambda-handler";
 import { StatusCode } from "../../enums/status-code.enum";
 import { ResponseMessage } from "../../enums/response-message.enum";
 
-const updateTaskHandler = async (body: {
+type UpdateTaskInput = {
   listId: string;
   taskId: string;
   completed: string;
   description: string;
-}): Promise<ResponseModel> => {
+};
+
+const updateTaskHandler: RequestHandler<UpdateTaskInput> = async (body) => {
   const databaseService = new DatabaseService();
   const { listId, taskId, completed, description } = body;
   const { listTable, tasksTable } = databaseTables();
@@ -25,11 +27,9 @@ const updateTaskHandler = async (body: {
     ]);
     const isCompletedPresent = typeof completed !== "undefined";
 
-    const updateExpression = `set ${
-      description ? "description = :description," : ""
-    } ${
-      typeof completed !== "undefined" ? "completed = :completed," : ""
-    } updatedAt = :timestamp`;
+    const updateExpression = `set ${description ? "description = :description," : ""
+      } ${typeof completed !== "undefined" ? "completed = :completed," : ""
+      } updatedAt = :timestamp`;
 
     if (description || isCompletedPresent) {
       const params: UpdateItem = {

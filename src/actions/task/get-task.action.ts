@@ -1,17 +1,14 @@
 import "source-map-support/register";
 
-import ResponseModel from "../../models/response.model";
-import DatabaseService from "../../services/database.service";
-import { databaseTables, validateRequest } from "../../utils/util";
 import requestConstraints from "../../constraints/task/get.constraint.json";
-import { QueryParams, wrapAsRequest } from "../../utils/lambda-handler";
 import { ResponseMessage } from "../../enums/response-message.enum";
 import { StatusCode } from "../../enums/status-code.enum";
+import ResponseModel from "../../models/response.model";
+import DatabaseService from "../../services/database.service";
+import { RequestHandler, wrapAsRequest } from "../../utils/lambda-handler";
+import { databaseTables, validateRequest } from "../../utils/util";
 
-const getTaskHandler = async (
-  _body: never,
-  queryParams: QueryParams
-): Promise<ResponseModel> => {
+const getTaskHandler: RequestHandler<never> = async (_body, queryParams) => {
   const databaseService = new DatabaseService();
   const { tasksTable } = databaseTables();
 
