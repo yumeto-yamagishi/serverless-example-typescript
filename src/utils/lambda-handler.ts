@@ -57,13 +57,7 @@ const wrapToApiGatewayEventHandler = <REQ>(
 
     let response: ResponseModel;
     try {
-      // TODO バリデーションを統合すること
-      if (opt.constraints?.body) {
-        await validateRequest(requestData, opt.constraints?.body)
-      }
-      if (opt.constraints?.query) {
-        await validateRequest(queryParams, opt.constraints?.query)
-      }
+      opt.constraints && await validateRequest(event, opt.constraints)
       response = await handler(requestData, queryParams, context);
     } catch (error: any) {
       response = error instanceof ResponseModel
