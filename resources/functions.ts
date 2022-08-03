@@ -1,6 +1,6 @@
 export default {
   createList: {
-    handler: "src/actions/handler.createList",
+    handler: "src/actions/list/create/handler.main",
     events: [
       {
         http: {

@@ -1,27 +1,6 @@
 
 
 
-### test POST /list with validation failed
-POST {{baseUrl}}/list
-Content-Type: application/json
-{}
-
-> {%
-client.test("status=400", function () {
-  client.assert(response.status === 400, "status code error")
-  client.assert(JSON.stringify(response.body) == JSON.stringify({
-    data: {
-      validation: {
-        name: [
-          "Name can't be blank"
-        ]
-      }
-    },
-    message: "required fields are missing",
-    status: "bad request"
-  }))
-})
-%}
 
 
 ### test POST /list
@@ -72,6 +51,8 @@ client.test("status=200", function() {
 
 
 
+
+
 ### test POST /task
 POST {{baseUrl}}/task
 {
@@ -86,6 +67,8 @@ client.test("status=201", function () {
   client.global.set("taskId", response.body.data.taskId)
 })
  %}
+
+
 
 
 
@@ -117,6 +100,8 @@ client.test("status=200", function () {
 
 
 
+
+
 ### test DELETE /task
 DELETE {{baseUrl}}/task?listId={{listId}}&taskId={{taskId}}
 {
@@ -129,6 +114,8 @@ client.test("status=204", function () {
   client.assert(response.status === 204, "status code error")
 })
  %}
+
+
 
 
 

@@ -1,0 +1,67 @@
+
+
+
+
+
+### test POST /list with validation failed (name not exist)
+POST {{baseUrl}}/list
+Content-Type: application/json
+
+{}
+
+> {%
+client.test("status=400", function () {
+  client.assert(response.status === 400, "status code error")
+  client.assert(JSON.stringify(response.body) == JSON.stringify({
+    data: {
+      validation: [
+        {
+          instancePath: "/body",
+          schemaPath: "#/properties/body/required",
+          keyword: "required",
+          params: {
+            missingProperty: "name"
+          },
+          message: "must have required property name"
+        }
+      ]
+    },
+    message: "Event object failed validation",
+    status: "bad request"
+  }))
+})
+%}
+
+
+
+
+### test POST /list with validation failed (name empty)
+POST {{baseUrl}}/list
+Content-Type: application/json
+
+{"name": ""}
+
+> {%
+client.test("status=400", function () {
+  client.assert(response.status === 400, "status code error")
+  client.assert(JSON.stringify(response.body) == JSON.stringify({
+    data: {
+      validation: [
+        {
+          instancePath: "/body/name",
+          schemaPath: "#/properties/body/properties/name/minLength",
+          keyword: "minLength",
+          params: {
+            limit: 1
+          },
+          message: "must NOT be shorter than 1 character"
+        }
+      ]
+    },
+    message: "Event object failed validation",
+    status: "bad request"
+  }))
+})
+%}
+
+
