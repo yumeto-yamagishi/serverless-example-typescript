@@ -1,20 +1,4 @@
 export default {
-  createList: {
-    handler: "src/actions/list/create/handler.main",
-    events: [
-      {
-        http: {
-          method: "POST",
-          path: "list",
-          cors: true,
-          throttling: {
-            maxRequestsPerSecond: 2,
-            maxConcurrentRequests: 1,
-          },
-        },
-      },
-    ],
-  },
   deleteList: {
     handler: "src/actions/handler.deleteList",
     events: [

@@ -1,5 +1,7 @@
+import { handlerPath } from "../../../utils/handler-resolver"
+
 export default {
-  handler: "src/actions/list/create/handler.main",
+  handler: `${handlerPath(__dirname)}/handler.main`,
   events: [
     {
       http: {

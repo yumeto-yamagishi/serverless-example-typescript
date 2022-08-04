@@ -2,6 +2,7 @@ import type { AWS } from "@serverless/typescript";
 import dynamoDbTables from "./resources/dynamodb-tables";
 import cloudwatchAlarms from "./resources/cloudwatch-alarms";
 import functions from "./resources/functions";
+import actions from "./src/actions";
 
 const serverlessConfiguration: AWS = {
   service: "todo-list",
@@ -145,7 +146,12 @@ const serverlessConfiguration: AWS = {
       alarms: ["functionErrors", "functionThrottles"],
     },
   },
-  functions,
+  functions: {
+    ...actions,
+
+    // TODO delete
+    ...functions,
+  },
   resources: {
     Resources: {
       ...dynamoDbTables,

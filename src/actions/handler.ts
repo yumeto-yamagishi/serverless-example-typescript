@@ -1,5 +1,7 @@
 import "source-map-support/register";
 
+// TODO delete this file
+
 // List functions
 export { deleteList } from "./list/delete-list.action";
 export { getList } from "./list/get-list.action";
