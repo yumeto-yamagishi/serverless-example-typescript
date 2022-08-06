@@ -1,18 +1,18 @@
 import "source-map-support/register";
 
-import requestConstraints from "../../constraints/list/get.constraint.json";
-import { ResponseMessage } from "../../enums/response-message.enum";
-import { StatusCode } from "../../enums/status-code.enum";
-import ResponseModel from "../../models/response.model";
-import DatabaseService, { QueryItem } from "../../services/database.service";
-import { RequestHandler, middyfy } from "../../utils/lambda-handler";
-import { databaseTables } from "../../utils/util";
+import { ResponseMessage } from "../../../enums/response-message.enum";
+import { StatusCode } from "../../../enums/status-code.enum";
+import ResponseModel from "../../../models/response.model";
+import DatabaseService, { QueryItem } from "../../../services/database.service";
+import { middyfy_new, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
+import { databaseTables } from "../../../utils/util";
+import eventSchema from "./schema";
 
-const getListHandler: RequestHandler<never> = async (_body, queryParams) => {
+const getListHandler: ValidatedRequestEventHandler<typeof eventSchema> = async (event) => {
   const databaseService = new DatabaseService();
   const { listTable, tasksTable } = databaseTables();
 
-  const { listId } = queryParams;
+  const { listId } = event.queryStringParameters;
   const data = await databaseService.getItem({
     key: listId!,
     tableName: listTable,
@@ -49,7 +49,7 @@ const getListHandler: RequestHandler<never> = async (_body, queryParams) => {
   );
 };
 
-export const getList = middyfy(getListHandler, {
-  constraints: { query: requestConstraints },
+export const main = middyfy_new(getListHandler, {
+  eventSchema,
   unhandledErrorMessage: ResponseMessage.GET_LIST_FAIL
 });

@@ -4,7 +4,6 @@ import "source-map-support/register";
 
 // List functions
 export { deleteList } from "./list/delete-list.action";
-export { getList } from "./list/get-list.action";
 export { updateList } from "./list/update-list.action";
 
 // Task functions

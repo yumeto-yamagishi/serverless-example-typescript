@@ -11,18 +11,6 @@ export default {
       },
     ],
   },
-  getList: {
-    handler: "src/actions/handler.getList",
-    events: [
-      {
-        http: {
-          method: "GET",
-          path: "list",
-          cors: true,
-        },
-      },
-    ],
-  },
   updateList: {
     handler: "src/actions/handler.updateList",
     events: [
