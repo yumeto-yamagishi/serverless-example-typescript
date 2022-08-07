@@ -1,16 +1,4 @@
 export default {
-  deleteList: {
-    handler: "src/actions/handler.deleteList",
-    events: [
-      {
-        http: {
-          method: "DELETE",
-          path: "list",
-          cors: true,
-        },
-      },
-    ],
-  },
   updateList: {
     handler: "src/actions/handler.updateList",
     events: [

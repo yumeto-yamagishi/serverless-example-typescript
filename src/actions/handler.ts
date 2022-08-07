@@ -3,7 +3,6 @@ import "source-map-support/register";
 // TODO delete this file
 
 // List functions
-export { deleteList } from "./list/delete-list.action";
 export { updateList } from "./list/update-list.action";
 
 // Task functions
