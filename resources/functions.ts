@@ -1,16 +1,4 @@
 export default {
-  updateTask: {
-    handler: "src/actions/handler.updateTask",
-    events: [
-      {
-        http: {
-          method: "PUT",
-          path: "task",
-          cors: true,
-        },
-      },
-    ],
-  },
   handleApiGatewayLog: {
     handler: "src/ops-handler.handleApiGatewayLog",
     events: [

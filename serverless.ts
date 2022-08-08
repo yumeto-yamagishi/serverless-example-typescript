@@ -148,8 +148,6 @@ const serverlessConfiguration: AWS = {
   },
   functions: {
     ...actions,
-
-    // TODO delete
     ...functions,
   },
   resources: {

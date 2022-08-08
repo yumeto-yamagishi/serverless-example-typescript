@@ -2,6 +2,8 @@
 
 
 
+
+
 ### test POST /list without body.name
 POST {{baseUrl}}/list
 Content-Type: application/json
@@ -33,6 +35,8 @@ client.test("status=400", function () {
 
 
 
+
+
 ### test POST /list with body.name="" (empty)
 POST {{baseUrl}}/list
 Content-Type: application/json
@@ -60,6 +64,8 @@ client.test("status=400", function () {
   }))
 })
 %}
+
+
 
 
 
@@ -211,6 +217,8 @@ client.test("status=400", function () {
 
 
 
+
+
 ### test PUT /list with body.listId="" and body.name=""
 PUT {{baseUrl}}/list
 Content-Type: application/json
@@ -247,6 +255,8 @@ client.test("status=400", function () {
   }))
 })
 %}
+
+
 
 
 
@@ -289,6 +299,8 @@ client.test("status=400", function () {
 
 
 
+
+
 ### test POST /task with body.listId="" and body.description=""
 POST {{baseUrl}}/task
 Content-Type: application/json
@@ -325,6 +337,8 @@ client.test("status=400", function () {
   }))
 })
 %}
+
+
 
 
 
@@ -470,3 +484,84 @@ client.test("status=400", function () {
   }))
 })
 %}
+
+
+### test PUT /task without body.listId and body.taskId
+PUT {{baseUrl}}/task
+Content-Type: application/json
+{}
+
+> {%
+client.test("status=400", function () {
+  client.assert(response.status === 400, "status code error")
+  client.assert(JSON.stringify(response.body) == JSON.stringify({
+    data: {
+      validation: [
+        {
+          instancePath: "/body",
+          schemaPath: "#/properties/body/required",
+          keyword: "required",
+          params: {
+            missingProperty: "listId"
+          },
+          message: "must have required property listId"
+        },
+        {
+          instancePath: "/body",
+          schemaPath: "#/properties/body/required",
+          keyword: "required",
+          params: {
+            missingProperty: "taskId"
+          },
+          message: "must have required property taskId"
+        }
+      ]
+    },
+    message: "Event object failed validation",
+    status: "bad request"
+  }))
+})
+%}
+
+
+
+
+
+### test PUT /task with body.listId="" and body.taskId=""
+PUT {{baseUrl}}/task
+Content-Type: application/json
+{"listId":"", "taskId": ""}
+
+> {%
+client.test("status=400", function () {
+  client.assert(response.status === 400, "status code error")
+  client.assert(JSON.stringify(response.body) == JSON.stringify({
+    data: {
+      validation: [
+        {
+          instancePath: "/body/listId",
+          schemaPath: "#/properties/body/properties/listId/minLength",
+          keyword: "minLength",
+          params: {
+            limit: 1
+          },
+          message: "must NOT be shorter than 1 character"
+        },
+        {
+          instancePath: "/body/taskId",
+          schemaPath: "#/properties/body/properties/taskId/minLength",
+          keyword: "minLength",
+          params: {
+            limit: 1
+          },
+          message: "must NOT be shorter than 1 character"
+        }
+      ]
+    },
+    message: "Event object failed validation",
+    status: "bad request"
+  }))
+})
+%}
+
+

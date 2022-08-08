@@ -1,23 +1,17 @@
 import "source-map-support/register";
 
-import requestConstraints from "../../constraints/task/update.constraint.json";
-import { ResponseMessage } from "../../enums/response-message.enum";
-import { StatusCode } from "../../enums/status-code.enum";
-import ResponseModel from "../../models/response.model";
-import DatabaseService, { UpdateItem } from "../../services/database.service";
-import { middyfy, RequestHandler } from "../../utils/lambda-handler";
-import { databaseTables } from "../../utils/util";
+import { ResponseMessage } from "../../../enums/response-message.enum";
+import { StatusCode } from "../../../enums/status-code.enum";
+import ResponseModel from "../../../models/response.model";
+import DatabaseService, { UpdateItem } from "../../../services/database.service";
+import { middyfy_new, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
+import { databaseTables } from "../../../utils/util";
+import eventSchema from "./schema";
 
-type UpdateTaskInput = {
-  listId: string;
-  taskId: string;
-  completed: string;
-  description: string;
-};
 
-const updateTaskHandler: RequestHandler<UpdateTaskInput> = async (body) => {
+const updateTaskHandler: ValidatedRequestEventHandler<typeof eventSchema> = async (event) => {
   const databaseService = new DatabaseService();
-  const { listId, taskId, completed, description } = body;
+  const { listId, taskId, completed, description } = event.body;
   const { listTable, tasksTable } = databaseTables();
 
   // validate with DB data
@@ -67,7 +61,7 @@ const updateTaskHandler: RequestHandler<UpdateTaskInput> = async (body) => {
   }
 };
 
-export const updateTask = middyfy(updateTaskHandler, {
-  constraints: { body: requestConstraints },
+export const main = middyfy_new(updateTaskHandler, {
+  eventSchema,
   unhandledErrorMessage: ResponseMessage.UPDATE_TASK_FAIL
 });
