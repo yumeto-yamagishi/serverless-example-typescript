@@ -1,18 +1,18 @@
 import "source-map-support/register";
 
-import requestConstraints from "../../constraints/task/delete.constraint.json";
-import { ResponseMessage } from "../../enums/response-message.enum";
-import { StatusCode } from "../../enums/status-code.enum";
-import ResponseModel from "../../models/response.model";
-import DatabaseService, { DeleteItem } from "../../services/database.service";
-import { middyfy, RequestHandler } from "../../utils/lambda-handler";
-import { databaseTables } from "../../utils/util";
+import { ResponseMessage } from "../../../enums/response-message.enum";
+import { StatusCode } from "../../../enums/status-code.enum";
+import ResponseModel from "../../../models/response.model";
+import DatabaseService, { DeleteItem } from "../../../services/database.service";
+import { middyfy_new, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
+import { databaseTables } from "../../../utils/util";
+import eventSchema from "./schema";
 
-const deleteTaskHandler: RequestHandler<never> = async (_body, queryParams) => {
+const deleteTaskHandler: ValidatedRequestEventHandler<typeof eventSchema> = async (event) => {
   const databaseService = new DatabaseService();
   const { tasksTable } = databaseTables();
 
-  const { taskId, listId } = queryParams;
+  const { taskId, listId } = event.queryStringParameters;
   const existsItem = await databaseService.existsItem({
     key: taskId!,
     hash: "listId",
@@ -41,7 +41,7 @@ const deleteTaskHandler: RequestHandler<never> = async (_body, queryParams) => {
   );
 };
 
-export const deleteTask = middyfy(deleteTaskHandler, {
-  constraints: { query: requestConstraints },
+export const main = middyfy_new(deleteTaskHandler, {
+  eventSchema,
   unhandledErrorMessage: ResponseMessage.DELETE_TASK_FAIL
 });

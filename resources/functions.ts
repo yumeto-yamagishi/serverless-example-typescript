@@ -1,16 +1,4 @@
 export default {
-  deleteTask: {
-    handler: "src/actions/handler.deleteTask",
-    events: [
-      {
-        http: {
-          method: "DELETE",
-          path: "task",
-          cors: true,
-        },
-      },
-    ],
-  },
   updateTask: {
     handler: "src/actions/handler.updateTask",
     events: [

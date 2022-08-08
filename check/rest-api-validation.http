@@ -398,3 +398,75 @@ client.test("status=400", function () {
   }))
 })
 %}
+
+
+### test DELETE /task without queryStringParameters.listId and queryStringParameters.taskId
+DELETE {{baseUrl}}/task
+Content-Type: application/json
+> {%
+client.test("status=400", function () {
+  client.assert(response.status === 400, "status code error")
+  client.assert(JSON.stringify(response.body) == JSON.stringify({
+    data: {
+      validation: [
+        {
+          instancePath: "/queryStringParameters",
+          schemaPath: "#/properties/queryStringParameters/required",
+          keyword: "required",
+          params: {
+            missingProperty: "listId"
+          },
+          message: "must have required property listId"
+        },
+        {
+          instancePath: "/queryStringParameters",
+          schemaPath: "#/properties/queryStringParameters/required",
+          keyword: "required",
+          params: {
+            missingProperty: "taskId"
+          },
+          message: "must have required property taskId"
+        }
+      ]
+    },
+    message: "Event object failed validation",
+    status: "bad request"
+  }))
+})
+%}
+
+
+### test DELETE /task with queryStringParameters.listId="" and queryStringParameters.taskId=""
+DELETE {{baseUrl}}/task?listId=&taskId=
+Content-Type: application/json
+> {%
+client.test("status=400", function () {
+  client.assert(response.status === 400, "status code error")
+  client.assert(JSON.stringify(response.body) == JSON.stringify({
+    data: {
+      validation: [
+        {
+          instancePath: "/queryStringParameters/listId",
+          schemaPath: "#/properties/queryStringParameters/properties/listId/minLength",
+          keyword: "minLength",
+          params: {
+            limit: 1
+          },
+          message: "must NOT be shorter than 1 character"
+        },
+        {
+          instancePath: "/queryStringParameters/taskId",
+          schemaPath: "#/properties/queryStringParameters/properties/taskId/minLength",
+          keyword: "minLength",
+          params: {
+            limit: 1
+          },
+          message: "must NOT be shorter than 1 character"
+        }
+      ]
+    },
+    message: "Event object failed validation",
+    status: "bad request"
+  }))
+})
+%}

@@ -7,6 +7,7 @@ import deleteList from "./list/delete";
 import updateList from "./list/update";
 import createTask from "./task/create";
 import getTask from "./task/get";
+import deleteTask from "./task/delete";
 
 export default {
     createList,
@@ -15,4 +16,5 @@ export default {
     updateList,
     createTask,
     getTask,
+    deleteTask,
 } as AWS["functions"];
