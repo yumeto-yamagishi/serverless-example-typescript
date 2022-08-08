@@ -1,8 +1,0 @@
-{
-  "listId": {
-    "presence": {
-      "allowEmpty": false
-    },
-    "type": "string"
-  }
-}

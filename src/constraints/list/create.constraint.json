@@ -1,8 +1,0 @@
-{
-  "name": {
-    "presence": {
-      "allowEmpty": false,
-      "type": "string"
-    }
-  }
-}
