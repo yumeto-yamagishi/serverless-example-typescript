@@ -1,16 +1,4 @@
 export default {
-  updateList: {
-    handler: "src/actions/handler.updateList",
-    events: [
-      {
-        http: {
-          method: "PUT",
-          path: "list",
-          cors: true,
-        },
-      },
-    ],
-  },
   createTask: {
     handler: "src/actions/handler.createTask",
     events: [

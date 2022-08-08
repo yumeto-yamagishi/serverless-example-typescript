@@ -1,17 +1,17 @@
 import "source-map-support/register";
 
-import requestConstraints from "../../constraints/list/update.constraint.json";
-import { ResponseMessage } from "../../enums/response-message.enum";
-import { StatusCode } from "../../enums/status-code.enum";
-import ResponseModel from "../../models/response.model";
-import DatabaseService, { UpdateItem } from "../../services/database.service";
-import { RequestHandler, middyfy } from "../../utils/lambda-handler";
-import { databaseTables } from "../../utils/util";
+import { ResponseMessage } from "../../../enums/response-message.enum";
+import { StatusCode } from "../../../enums/status-code.enum";
+import ResponseModel from "../../../models/response.model";
+import DatabaseService, { UpdateItem } from "../../../services/database.service";
+import { middyfy_new, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
+import { databaseTables } from "../../../utils/util";
+import eventSchema from "./schema";
 
-const updateListHandler: RequestHandler<{ listId: string; name: string; }> = async (body) => {
+const updateListHandler: ValidatedRequestEventHandler<typeof eventSchema> = async (event) => {
   const databaseService = new DatabaseService();
   const { listTable } = databaseTables();
-  const { listId, name } = body;
+  const { listId, name } = event.body;
 
   // validate with DB data
   await Promise.all([
@@ -41,7 +41,7 @@ const updateListHandler: RequestHandler<{ listId: string; name: string; }> = asy
   );
 };
 
-export const updateList = middyfy(updateListHandler, {
-  constraints: { body: requestConstraints },
+export const main = middyfy_new(updateListHandler, {
+  eventSchema,
   unhandledErrorMessage: ResponseMessage.UPDATE_LIST_FAIL
 });

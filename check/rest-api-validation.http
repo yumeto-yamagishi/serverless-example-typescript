@@ -98,16 +98,6 @@ client.test("status=400", function () {
 })
 %}
 
-HTTP/1.1 400  - Bad Request
-content-type: application/json; charset=utf-8
-vary: origin
-access-control-allow-credentials: true
-access-control-expose-headers: WWW-Authenticate,Server-Authorization
-cache-control: no-cache
-content-length: 298
-date: Sat, 06 Aug 2022 00:10:36 GMT
-connection: close
-
 
 ### test GET /list with queryStringParameters.listId="" (empty)
 GET {{baseUrl}}/list?listId=
@@ -134,16 +124,6 @@ client.test("status=400", function () {
   }))
 })
 %}
-
-HTTP/1.1 400  - Bad Request
-content-type: application/json; charset=utf-8
-vary: origin
-access-control-allow-credentials: true
-access-control-expose-headers: WWW-Authenticate,Server-Authorization
-cache-control: no-cache
-content-length: 310
-date: Sat, 06 Aug 2022 00:12:45 GMT
-connection: close
 
 
 ### test DELETE /list without queryStringParameters.listId
@@ -203,3 +183,85 @@ client.test("status=400", function () {
 %}
 
 
+
+
+###
+
+
+
+
+### test UPDATE /list without body.listId and body.name
+PUT {{baseUrl}}/list
+Content-Type: application/json
+{}
+
+> {%
+client.test("status=400", function () {
+  client.assert(response.status === 400, "status code error")
+  client.assert(JSON.stringify(response.body) == JSON.stringify({
+    data: {
+      validation: [
+        {
+          instancePath: "/body",
+          schemaPath: "#/properties/body/required",
+          keyword: "required",
+          params: {
+            "missingProperty": "name"
+          },
+          message: "must have required property name"
+        },
+        {
+          instancePath: "/body",
+          schemaPath: "#/properties/body/required",
+          keyword: "required",
+          params: {
+            "missingProperty": "listId"
+          },
+          message: "must have required property listId"
+        }
+      ]
+    },
+    message: "Event object failed validation",
+    status: "bad request"
+  }))
+})
+%}
+
+
+
+### test UPDATE /list with body.listId="" and body.name=""
+PUT {{baseUrl}}/list
+Content-Type: application/json
+{"listId": "", "name": ""}
+
+> {%
+client.test("status=400", function () {
+  client.assert(response.status === 400, "status code error")
+  client.assert(JSON.stringify(response.body) == JSON.stringify({
+    data: {
+      validation: [
+        {
+          instancePath: "/body/listId",
+          schemaPath: "#/properties/body/properties/listId/minLength",
+          keyword: "minLength",
+          params: {
+            "limit": 1
+          },
+          message: "must NOT be shorter than 1 character"
+        },
+        {
+          instancePath: "/body/name",
+          schemaPath: "#/properties/body/properties/name/minLength",
+          keyword: "minLength",
+          params: {
+            "limit": 1
+          },
+          message: "must NOT be shorter than 1 character"
+        }
+      ]
+    },
+    message: "Event object failed validation",
+    status: "bad request"
+  }))
+})
+%}
