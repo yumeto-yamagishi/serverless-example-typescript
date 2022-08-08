@@ -4,7 +4,7 @@ import { ResponseMessage } from "../../../enums/response-message.enum";
 import { StatusCode } from "../../../enums/status-code.enum";
 import ResponseModel from "../../../models/response.model";
 import DatabaseService from "../../../services/database.service";
-import { middyfy_new, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
+import { middyfy, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
 import { databaseTables } from "../../../utils/util";
 import eventSchema from "./schema";
 
@@ -26,7 +26,7 @@ const getTaskHandler: ValidatedRequestEventHandler<typeof eventSchema> = async (
   );
 };
 
-export const main = middyfy_new(getTaskHandler, {
+export const main = middyfy(getTaskHandler, {
   eventSchema,
   unhandledErrorMessage: ResponseMessage.GET_TASK_FAIL
 });

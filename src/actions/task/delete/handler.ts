@@ -4,7 +4,7 @@ import { ResponseMessage } from "../../../enums/response-message.enum";
 import { StatusCode } from "../../../enums/status-code.enum";
 import ResponseModel from "../../../models/response.model";
 import DatabaseService, { DeleteItem } from "../../../services/database.service";
-import { middyfy_new, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
+import { middyfy, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
 import { databaseTables } from "../../../utils/util";
 import eventSchema from "./schema";
 
@@ -41,7 +41,7 @@ const deleteTaskHandler: ValidatedRequestEventHandler<typeof eventSchema> = asyn
   );
 };
 
-export const main = middyfy_new(deleteTaskHandler, {
+export const main = middyfy(deleteTaskHandler, {
   eventSchema,
   unhandledErrorMessage: ResponseMessage.DELETE_TASK_FAIL
 });

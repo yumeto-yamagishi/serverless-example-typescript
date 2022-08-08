@@ -5,7 +5,7 @@ import { StatusCode } from "../../../enums/status-code.enum";
 import ResponseModel from "../../../models/response.model";
 import TaskModel from "../../../models/task.model";
 import DatabaseService, { PutItem } from "../../../services/database.service";
-import { middyfy_new, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
+import { middyfy, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
 import { databaseTables } from "../../../utils/util";
 import eventSchema from "./schema";
 
@@ -42,7 +42,7 @@ const createTaskHandler: ValidatedRequestEventHandler<typeof eventSchema> = asyn
   );
 };
 
-export const main = middyfy_new(createTaskHandler, {
+export const main = middyfy(createTaskHandler, {
   eventSchema,
   unhandledErrorMessage: ResponseMessage.CREATE_TASK_FAIL
 });

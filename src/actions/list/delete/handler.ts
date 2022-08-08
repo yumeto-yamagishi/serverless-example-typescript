@@ -7,7 +7,7 @@ import DatabaseService, {
   DeleteItem,
   QueryItem
 } from "../../../services/database.service";
-import { middyfy_new, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
+import { middyfy, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
 import {
   createChunks,
   databaseTables
@@ -80,7 +80,7 @@ const deleteListHandler: ValidatedRequestEventHandler<typeof eventSchema> = asyn
   );
 };
 
-export const main = middyfy_new(deleteListHandler, {
+export const main = middyfy(deleteListHandler, {
   eventSchema,
   unhandledErrorMessage: ResponseMessage.DELETE_LIST_FAIL
 });

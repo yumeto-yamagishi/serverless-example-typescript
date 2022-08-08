@@ -5,7 +5,7 @@ import { StatusCode } from "../../../enums/status-code.enum";
 import ListModel from "../../../models/list.model";
 import ResponseModel from "../../../models/response.model";
 import DatabaseService, { PutItem } from "../../../services/database.service";
-import { ValidatedRequestEventHandler, middyfy_new } from "../../../utils/lambda-handler";
+import { ValidatedRequestEventHandler, middyfy } from "../../../utils/lambda-handler";
 import { databaseTables } from "../../../utils/util";
 import eventSchema from "./schema";
 
@@ -33,4 +33,4 @@ const createListHandler: ValidatedRequestEventHandler<typeof eventSchema> = asyn
   );
 };
 
-export const main = middyfy_new(createListHandler, { eventSchema, unhandledErrorMessage });
+export const main = middyfy(createListHandler, { eventSchema, unhandledErrorMessage });
