@@ -78,7 +78,7 @@ client.test("status=400", function () {
           schemaPath: "#/properties/queryStringParameters/required",
           keyword: "required",
           params: {
-            "missingProperty": "listId"
+            missingProperty: "listId"
           },
           message: "must have required property listId"
         }
@@ -105,7 +105,7 @@ client.test("status=400", function () {
           schemaPath: "#/properties/queryStringParameters/properties/listId/minLength",
           keyword: "minLength",
           params: {
-            "limit": 1
+            limit: 1
           },
           message: "must NOT be shorter than 1 character"
         }
@@ -132,7 +132,7 @@ client.test("status=400", function () {
           schemaPath: "#/properties/queryStringParameters/required",
           keyword: "required",
           params: {
-            "missingProperty": "listId"
+            missingProperty: "listId"
           },
           message: "must have required property listId"
         }
@@ -159,7 +159,7 @@ client.test("status=400", function () {
           schemaPath: "#/properties/queryStringParameters/properties/listId/minLength",
           keyword: "minLength",
           params: {
-            "limit": 1
+            limit: 1
           },
           message: "must NOT be shorter than 1 character"
         }
@@ -170,9 +170,6 @@ client.test("status=400", function () {
   }))
 })
 %}
-
-
-###
 
 
 ### test PUT /list without body.listId and body.name
@@ -191,7 +188,7 @@ client.test("status=400", function () {
           schemaPath: "#/properties/body/required",
           keyword: "required",
           params: {
-            "missingProperty": "name"
+            missingProperty: "name"
           },
           message: "must have required property name"
         },
@@ -200,7 +197,7 @@ client.test("status=400", function () {
           schemaPath: "#/properties/body/required",
           keyword: "required",
           params: {
-            "missingProperty": "listId"
+            missingProperty: "listId"
           },
           message: "must have required property listId"
         }
@@ -230,7 +227,7 @@ client.test("status=400", function () {
           schemaPath: "#/properties/body/properties/listId/minLength",
           keyword: "minLength",
           params: {
-            "limit": 1
+            limit: 1
           },
           message: "must NOT be shorter than 1 character"
         },
@@ -239,7 +236,7 @@ client.test("status=400", function () {
           schemaPath: "#/properties/body/properties/name/minLength",
           keyword: "minLength",
           params: {
-            "limit": 1
+            limit: 1
           },
           message: "must NOT be shorter than 1 character"
         }
@@ -269,7 +266,7 @@ client.test("status=400", function () {
           schemaPath: "#/properties/body/required",
           keyword: "required",
           params: {
-            "missingProperty": "listId"
+            missingProperty: "listId"
           },
           message: "must have required property listId"
         },
@@ -278,7 +275,7 @@ client.test("status=400", function () {
           schemaPath: "#/properties/body/required",
           keyword: "required",
           params: {
-            "missingProperty": "description"
+            missingProperty: "description"
           },
           message: "must have required property description"
         }
@@ -308,7 +305,7 @@ client.test("status=400", function () {
           schemaPath: "#/properties/body/properties/listId/minLength",
           keyword: "minLength",
           params: {
-            "limit": 1
+            limit: 1
           },
           message: "must NOT be shorter than 1 character"
         },
@@ -317,7 +314,80 @@ client.test("status=400", function () {
           schemaPath: "#/properties/body/properties/description/minLength",
           keyword: "minLength",
           params: {
-            "limit": 1
+            limit: 1
+          },
+          message: "must NOT be shorter than 1 character"
+        }
+      ]
+    },
+    message: "Event object failed validation",
+    status: "bad request"
+  }))
+})
+%}
+
+
+
+### test GET /task without queryStringParameters.listId and queryStringParameters.taskId
+GET {{baseUrl}}/task
+Content-Type: application/json
+> {%
+client.test("status=400", function () {
+  client.assert(response.status === 400, "status code error")
+  client.assert(JSON.stringify(response.body) == JSON.stringify({
+    data: {
+      validation: [
+        {
+          instancePath: "/queryStringParameters",
+          schemaPath: "#/properties/queryStringParameters/required",
+          keyword: "required",
+          params: {
+            missingProperty: "listId"
+          },
+          message: "must have required property listId"
+        },
+        {
+          instancePath: "/queryStringParameters",
+          schemaPath: "#/properties/queryStringParameters/required",
+          keyword: "required",
+          params: {
+            missingProperty: "taskId"
+          },
+          message: "must have required property taskId"
+        }
+      ]
+    },
+    message: "Event object failed validation",
+    status: "bad request"
+  }))
+})
+%}
+
+
+### test GET /task with queryStringParameters.listId="" and queryStringParameters.taskId=""
+GET {{baseUrl}}/task?listId=&taskId=
+Content-Type: application/json
+> {%
+client.test("status=400", function () {
+  client.assert(response.status === 400, "status code error")
+  client.assert(JSON.stringify(response.body) == JSON.stringify({
+    data: {
+      validation: [
+        {
+          instancePath: "/queryStringParameters/listId",
+          schemaPath: "#/properties/queryStringParameters/properties/listId/minLength",
+          keyword: "minLength",
+          params: {
+            limit: 1
+          },
+          message: "must NOT be shorter than 1 character"
+        },
+        {
+          instancePath: "/queryStringParameters/taskId",
+          schemaPath: "#/properties/queryStringParameters/properties/taskId/minLength",
+          keyword: "minLength",
+          params: {
+            limit: 1
           },
           message: "must NOT be shorter than 1 character"
         }

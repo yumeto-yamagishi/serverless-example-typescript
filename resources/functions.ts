@@ -11,18 +11,6 @@ export default {
       },
     ],
   },
-  getTask: {
-    handler: "src/actions/handler.getTask",
-    events: [
-      {
-        http: {
-          method: "GET",
-          path: "task",
-          cors: true,
-        },
-      },
-    ],
-  },
   updateTask: {
     handler: "src/actions/handler.updateTask",
     events: [
