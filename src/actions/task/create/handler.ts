@@ -1,26 +1,26 @@
 import "source-map-support/register";
 
-import requestConstraints from "../../constraints/task/create.constraint.json";
-import { ResponseMessage } from "../../enums/response-message.enum";
-import { StatusCode } from "../../enums/status-code.enum";
-import ResponseModel from "../../models/response.model";
-import TaskModel, { ITaskInterface } from "../../models/task.model";
-import DatabaseService, { PutItem } from "../../services/database.service";
-import { middyfy, RequestHandler } from "../../utils/lambda-handler";
-import { databaseTables } from "../../utils/util";
+import { ResponseMessage } from "../../../enums/response-message.enum";
+import { StatusCode } from "../../../enums/status-code.enum";
+import ResponseModel from "../../../models/response.model";
+import TaskModel from "../../../models/task.model";
+import DatabaseService, { PutItem } from "../../../services/database.service";
+import { middyfy_new, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
+import { databaseTables } from "../../../utils/util";
+import eventSchema from "./schema";
 
-const createTaskHandler: RequestHandler<ITaskInterface> = async (body) => {
+const createTaskHandler: ValidatedRequestEventHandler<typeof eventSchema> = async (event) => {
   const databaseService = new DatabaseService();
   const { listTable, tasksTable } = databaseTables();
 
   // validate with DB data
   await Promise.all([
     databaseService.getItem({
-      key: body.listId,
+      key: event.body.listId,
       tableName: listTable,
     }),
   ]);
-  const taskModel = new TaskModel(body);
+  const taskModel = new TaskModel({ ...event.body, completed: false });
   const data = taskModel.toEntityMapping();
 
   const params: PutItem = {
@@ -42,7 +42,7 @@ const createTaskHandler: RequestHandler<ITaskInterface> = async (body) => {
   );
 };
 
-export const createTask = middyfy(createTaskHandler, {
-  constraints: { body: requestConstraints },
+export const main = middyfy_new(createTaskHandler, {
+  eventSchema,
   unhandledErrorMessage: ResponseMessage.CREATE_TASK_FAIL
 });
