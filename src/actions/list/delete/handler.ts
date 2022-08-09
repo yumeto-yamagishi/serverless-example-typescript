@@ -3,20 +3,13 @@ import "source-map-support/register";
 import { ResponseMessage } from "../../../enums/response-message.enum";
 import { StatusCode } from "../../../enums/status-code.enum";
 import ResponseModel from "../../../models/response.model";
-import DatabaseService, {
-  DeleteItem,
-  QueryItem
-} from "../../../services/database.service";
+import { databaseService, DeleteItem, QueryItem, tables } from "../../../services/database.service";
 import { middyfy, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
-import {
-  createChunks,
-  databaseTables
-} from "../../../utils/util";
+import { createChunks } from "../../../utils/util";
 import eventSchema from "./schema";
 
 const deleteListHandler: ValidatedRequestEventHandler<typeof eventSchema> = async (event) => {
-  const { listTable, tasksTable } = databaseTables();
-  const databaseService = new DatabaseService();
+  const { listTable, tasksTable } = tables;
 
   const { listId } = event.queryStringParameters;
 

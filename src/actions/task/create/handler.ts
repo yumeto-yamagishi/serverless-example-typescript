@@ -4,14 +4,12 @@ import { ResponseMessage } from "../../../enums/response-message.enum";
 import { StatusCode } from "../../../enums/status-code.enum";
 import ResponseModel from "../../../models/response.model";
 import TaskModel from "../../../models/task.model";
-import DatabaseService, { PutItem } from "../../../services/database.service";
+import { databaseService, PutItem, tables } from "../../../services/database.service";
 import { middyfy, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
-import { databaseTables } from "../../../utils/util";
 import eventSchema from "./schema";
 
 const createTaskHandler: ValidatedRequestEventHandler<typeof eventSchema> = async (event) => {
-  const databaseService = new DatabaseService();
-  const { listTable, tasksTable } = databaseTables();
+  const { listTable, tasksTable } = tables;
 
   // validate with DB data
   await Promise.all([

@@ -3,14 +3,12 @@ import "source-map-support/register";
 import { ResponseMessage } from "../../../enums/response-message.enum";
 import { StatusCode } from "../../../enums/status-code.enum";
 import ResponseModel from "../../../models/response.model";
-import DatabaseService, { UpdateItem } from "../../../services/database.service";
+import { databaseService, tables, UpdateItem } from "../../../services/database.service";
 import { middyfy, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
-import { databaseTables } from "../../../utils/util";
 import eventSchema from "./schema";
 
 const updateListHandler: ValidatedRequestEventHandler<typeof eventSchema> = async (event) => {
-  const databaseService = new DatabaseService();
-  const { listTable } = databaseTables();
+  const { listTable } = tables;
   const { listId, name } = event.body;
 
   // validate with DB data

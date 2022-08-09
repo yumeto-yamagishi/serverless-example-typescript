@@ -4,20 +4,17 @@ import { ResponseMessage } from "../../../enums/response-message.enum";
 import { StatusCode } from "../../../enums/status-code.enum";
 import ListModel from "../../../models/list.model";
 import ResponseModel from "../../../models/response.model";
-import DatabaseService, { PutItem } from "../../../services/database.service";
-import { ValidatedRequestEventHandler, middyfy } from "../../../utils/lambda-handler";
-import { databaseTables } from "../../../utils/util";
+import { databaseService, PutItem, tables } from "../../../services/database.service";
+import { middyfy, ValidatedRequestEventHandler } from "../../../utils/lambda-handler";
 import eventSchema from "./schema";
 
 const unhandledErrorMessage = ResponseMessage.CREATE_LIST_FAIL;
 
 const createListHandler: ValidatedRequestEventHandler<typeof eventSchema> = async (event) => {
-  const databaseService = new DatabaseService();
-
   const listModel = new ListModel({ name: event.body.name });
   const data = listModel.toEntityMappings();
   const params: PutItem = {
-    TableName: databaseTables().listTable,
+    TableName: tables.listTable,
     Item: {
       id: data.id,
       name: data.name,
