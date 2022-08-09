@@ -4,7 +4,8 @@
   "description": "todo-list app",
   "main": "handler.js",
   "scripts": {
-    "test:rest-api": "httpyac check/rest-api.http --env dev --all",
+    "test:rest-api": "run-s test:rest-api:*",
+    "test:rest-api:senario": "httpyac check/rest-api.http --env dev --all",
     "test:rest-api:validation": "httpyac check/rest-api-validation.http --env dev --all",
     "deploy:prod": "sls deploy --stage prod",
     "package:prod": "sls package --stage prod",
