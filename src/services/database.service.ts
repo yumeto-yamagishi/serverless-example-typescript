@@ -2,8 +2,11 @@ import * as AWS from "aws-sdk";
 
 import ResponseModel from "../models/response.model";
 
-import { StatusCode } from "../enums/status-code.enum";
+import { ConfigurationOptions } from "aws-sdk";
+import { ConfigurationServicePlaceholders } from "aws-sdk/lib/config_service_placeholders";
+import { dynamodbLocalConfig, region, stage, databaseTables } from "../config";
 import { ResponseMessage } from "../enums/response-message.enum";
+import { StatusCode } from "../enums/status-code.enum";
 
 export type PutItem = AWS.DynamoDB.DocumentClient.PutItemInput;
 export type PutItemOutput = AWS.DynamoDB.DocumentClient.PutItemOutput;
@@ -24,34 +27,35 @@ export type DeleteItem = AWS.DynamoDB.DocumentClient.DeleteItemInput;
 export type DeleteItemOutput = AWS.DynamoDB.DocumentClient.DeleteItemOutput;
 
 type Item = Record<string, string>;
+type ServiceOption = ConfigurationOptions & ConfigurationServicePlaceholders;
 
-const { STAGE } = process.env;
-
-
-interface IConfig {
-  region: string;
-  accessKeyId?: string;
-  secretAccessKey?: string;
-  endpoint?: string;
-}
-
-const config: IConfig = {
-  region: "ap-northeast-1",
+const config: ServiceOption = {
+  region,
 };
 
-if (STAGE === "dev") {
-  config.accessKeyId = "dummy";
-  config.secretAccessKey = "dummy";
-  config.endpoint = "http://localhost:8008";
+if (dynamodbLocalConfig.enabled) {
+  config.credentials = {
+    accessKeyId: "dummy",
+    secretAccessKey: "dummy"
+  };
+  config.dynamodb = {
+    ...config.dynamodb,
+    endpoint: `http://localhost:${dynamodbLocalConfig.port}`,
+  };
   console.log("dynamodb-local mode", config);
 } else {
-  console.log("running dynamodb on aws on", STAGE);
+  console.log("running dynamodb on aws on stage:", stage);
 }
 AWS.config.update(config);
 
-const documentClient = new AWS.DynamoDB.DocumentClient();
 
 export default class DatabaseService {
+  private readonly documentClient: AWS.DynamoDB.DocumentClient;
+
+  constructor(option?: ServiceOption) {
+    this.documentClient = new AWS.DynamoDB.DocumentClient(option);
+  }
+
   getItem = async ({
     key,
     hash,
@@ -99,7 +103,7 @@ export default class DatabaseService {
 
   create = async (params: PutItem): Promise<PutItemOutput> => {
     try {
-      return await documentClient.put(params).promise();
+      return await this.documentClient.put(params).promise();
     } catch (error) {
       console.error("create-error", error);
       throw new ResponseModel({}, StatusCode.ERROR, `create-error: ${error}`);
@@ -108,7 +112,7 @@ export default class DatabaseService {
 
   batchCreate = async (params: BatchWrite): Promise<BatchWriteOutput> => {
     try {
-      return await documentClient.batchWrite(params).promise();
+      return await this.documentClient.batchWrite(params).promise();
     } catch (error) {
       throw new ResponseModel(
         {},
@@ -120,7 +124,7 @@ export default class DatabaseService {
 
   update = async (params: UpdateItem): Promise<UpdateItemOutput> => {
     try {
-      return await documentClient.update(params).promise();
+      return await this.documentClient.update(params).promise();
     } catch (error) {
       throw new ResponseModel({}, StatusCode.ERROR, `update-error: ${error}`);
     }
@@ -128,7 +132,7 @@ export default class DatabaseService {
 
   query = async (params: QueryItem): Promise<QueryItemOutput> => {
     try {
-      return await documentClient.query(params).promise();
+      return await this.documentClient.query(params).promise();
     } catch (error) {
       throw new ResponseModel({}, StatusCode.ERROR, `query-error: ${error}`);
     }
@@ -136,7 +140,7 @@ export default class DatabaseService {
 
   get = async (params: GetItem): Promise<GetItemOutput> => {
     try {
-      return await documentClient.get(params).promise();
+      return await this.documentClient.get(params).promise();
     } catch (error) {
       throw new ResponseModel({}, StatusCode.ERROR, `get-error: ${error}`);
     }
@@ -144,9 +148,16 @@ export default class DatabaseService {
 
   delete = async (params: DeleteItem): Promise<DeleteItemOutput> => {
     try {
-      return await documentClient.delete(params).promise();
+      return await this.documentClient.delete(params).promise();
     } catch (error) {
       throw new ResponseModel({}, StatusCode.ERROR, `delete-error: ${error}`);
     }
   };
 }
+
+
+const _databaseServiceInstance = new DatabaseService(config);
+export {
+  databaseTables as tables,
+  _databaseServiceInstance as databaseService
+};
