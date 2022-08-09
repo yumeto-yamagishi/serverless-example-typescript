@@ -4,6 +4,8 @@ import cloudwatchAlarms from "./resources/cloudwatch-alarms";
 import actions from "./src/actions";
 import opsHandlers from "./src/ops-handlers";
 
+const dynamoDbLocalStages = ["dev"]
+
 const serverlessConfiguration: AWS = {
   service: "todo-list",
   frameworkVersion: "3",
@@ -56,6 +58,8 @@ const serverlessConfiguration: AWS = {
       STAGE: "${self:custom.stage}",
       LIST_TABLE: "${self:custom.listTable}",
       TASKS_TABLE: "${self:custom.tasksTable}",
+      DYNAMODB_LOCAL_PORT: "${self:custom.dynamodb.start.port}",
+      DYNAMODB_LOCAL_STAGES: dynamoDbLocalStages.join(","),
     },
     iam: {
       role: {
@@ -99,7 +103,7 @@ const serverlessConfiguration: AWS = {
     tableThroughput:
       "${self:custom.tableThroughputs.${self:custom.stage}, self:custom.tableThroughputs.default}",
     dynamodb: {
-      stages: ["dev"],
+      stages: dynamoDbLocalStages,
       start: {
         port: 8008,
         inMemory: true,
