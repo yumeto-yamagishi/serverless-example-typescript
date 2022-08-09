@@ -4,7 +4,6 @@ import ResponseModel from "../models/response.model";
 
 import { StatusCode } from "../enums/status-code.enum";
 import { ResponseMessage } from "../enums/response-message.enum";
-import IConfig from "../interfaces/config.interface";
 
 export type PutItem = AWS.DynamoDB.DocumentClient.PutItemInput;
 export type PutItemOutput = AWS.DynamoDB.DocumentClient.PutItemOutput;
@@ -27,6 +26,15 @@ export type DeleteItemOutput = AWS.DynamoDB.DocumentClient.DeleteItemOutput;
 type Item = Record<string, string>;
 
 const { STAGE } = process.env;
+
+
+interface IConfig {
+  region: string;
+  accessKeyId?: string;
+  secretAccessKey?: string;
+  endpoint?: string;
+}
+
 const config: IConfig = {
   region: "ap-northeast-1",
 };
@@ -45,11 +53,11 @@ const documentClient = new AWS.DynamoDB.DocumentClient();
 
 export default class DatabaseService {
   getItem = async ({
-                     key,
-                     hash,
-                     hashValue,
-                     tableName,
-                   }: Item): Promise<GetItemOutput> => {
+    key,
+    hash,
+    hashValue,
+    tableName,
+  }: Item): Promise<GetItemOutput> => {
     const params = {
       TableName: tableName,
       Key: {
@@ -65,20 +73,20 @@ export default class DatabaseService {
     }
     console.log("item does not exist");
     throw new ResponseModel(
-      {id: key},
+      { id: key },
       StatusCode.NOT_FOUND,
       ResponseMessage.GET_ITEM_ERROR
     );
   };
 
   existsItem = async ({
-                        key,
-                        hash,
-                        hashValue,
-                        tableName,
-                      }: Item): Promise<boolean> => {
+    key,
+    hash,
+    hashValue,
+    tableName,
+  }: Item): Promise<boolean> => {
     try {
-      await this.getItem({key, hash, hashValue, tableName});
+      await this.getItem({ key, hash, hashValue, tableName });
       return true;
     } catch (e) {
       if (e instanceof ResponseModel) {
