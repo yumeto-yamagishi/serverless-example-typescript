@@ -26,7 +26,7 @@ export function middyfy<S extends JSONSchema, H extends ValidatedRequestEventHan
     .use(middyErrorHandler({ fallbackMessage: opt?.unhandledErrorMessage }))
     .use(middyEventNormalizer())
     .use(middyJsonBodyParser())
-    .use(responseModelConverter)
+    .use(responseModelConverter())
     .use(opt?.eventSchema
       ? [
         middyValidator({ eventSchema: opt.eventSchema }),
@@ -42,7 +42,7 @@ export function middyfy<S extends JSONSchema, H extends ValidatedRequestEventHan
 /**
  * Convert @middy/validator error to `ResponseModel`
  */
-function validationErrorToResponseModelConverter() {
+function validationErrorToResponseModelConverter(): middy.MiddlewareObj {
   /**
    * Checks and cast the given e is HttpError with validation failed cause thrown by @middy/validator.
    * @param e the thrown error to be checked.
@@ -64,30 +64,33 @@ function validationErrorToResponseModelConverter() {
   }
 };
 
-const responseModelConverterFn: middy.MiddlewareFn = (request) => {
-  const { response, error } = request;
-
-  let responseModel: ResponseModel | undefined;
-  if (response instanceof ResponseModel) {
-    responseModel = response;
-  } else if (response !== undefined) {
-    // Already response is resolved
-    return response;
-  } else if (error instanceof ResponseModel) {
-    responseModel = error;
-  }
-  if (responseModel) {
-    request.response = {
-      statusCode: responseModel.code,
-      body: JSON.stringify(responseModel.body),
-    };
-  }
-};
-
 /**
  * Convert `ResponseModel` to `ApiGatewayProxyResult`
  */
-const responseModelConverter: middy.MiddlewareObj = {
-  after: responseModelConverterFn,
-  onError: responseModelConverterFn,
+function responseModelConverter(): middy.MiddlewareObj {
+
+  const responseModelConverterFn: middy.MiddlewareFn = (request) => {
+    const { response, error } = request;
+
+    let responseModel: ResponseModel | undefined;
+    if (response instanceof ResponseModel) {
+      responseModel = response;
+    } else if (response !== undefined) {
+      // Already response is resolved
+      return response;
+    } else if (error instanceof ResponseModel) {
+      responseModel = error;
+    }
+    if (responseModel) {
+      request.response = {
+        statusCode: responseModel.code,
+        body: JSON.stringify(responseModel.body),
+      };
+    }
+  };
+
+  return {
+    after: responseModelConverterFn,
+    onError: responseModelConverterFn,
+  }
 }
