@@ -10,16 +10,12 @@ export interface IListInterface extends IProps {
 }
 
 export default class ListModel {
-  private _id: string;
+  private readonly _id: string;
   private _name: string;
 
-  constructor({ id = UUID(), name = "" }: IProps) {
-    this._id = id;
+  constructor({ id = undefined, name = "" }: IProps) {
+    this._id = id ?? UUID();
     this._name = name;
-  }
-
-  set id(value: string) {
-    this._id = value;
   }
 
   get id(): string {
