@@ -6,17 +6,45 @@ import middyEventNormalizer from "@middy/http-event-normalizer";
 import middyJsonBodyParser from "@middy/http-json-body-parser";
 import { HttpError } from "@middy/util";
 import middyValidator from "@middy/validator";
-import { Handler } from "aws-lambda";
+import { APIGatewayProxyEvent, Handler } from "aws-lambda";
 import { FromSchema, JSONSchema } from "json-schema-to-ts";
 import { StatusCode } from "../enums/status-code.enum";
 import ResponseModel from "../models/response.model";
 
 // ApiGateway and Handers
-export type ValidatedRequestEvent<S> = FromSchema<S>;
-export type ValidatedRequestEventHandler<S> = Handler<ValidatedRequestEvent<S>, ResponseModel>;
 
-type MiddyfyOption<S = undefined> = { eventSchema: S, unhandledErrorMessage?: string };
-export function middyfy<S extends JSONSchema, H extends ValidatedRequestEventHandler<S>>(handler: H, opt?: MiddyfyOption<S>) {
+/**
+ * RequestEventHandler for the ApiGatewayProxyEvent request validated with the event schema of 'S'.
+ */
+export type ValidatedRequestEventHandler<S extends JSONSchema> = Handler<FromSchema<S>, ResponseModel>;
+/**
+ * RequestEventHandler for the ApiGatewayProxyEvent request without any validation.
+ */
+export type ApiGatewayEventHandler = Handler<APIGatewayProxyEvent, ResponseModel>;
+
+type MiddyfyOption = {
+  /**
+   * Response message in case that any unhandled (internal) error
+   */
+  unhandledErrorMessage?: string
+};
+
+/**
+ * 
+ * @param handler the event handler. Throwing ResponseModel is permitted.
+ * @param opt (Required property) eventSchema is JSONSchema object to be used for runtime validation of request.
+ * @returns 
+ */
+export function middyfy<S extends JSONSchema, H extends ValidatedRequestEventHandler<S>>(handler: H, opt: MiddyfyOption & { eventSchema: S }): middy.MiddyfiedHandler
+/**
+ * 
+ * @param handler 
+ * @param opt 
+ * @returns 
+ */
+export function middyfy(handler: ApiGatewayEventHandler, opt?: MiddyfyOption): middy.MiddyfiedHandler
+// implementation
+export function middyfy<S extends JSONSchema, H extends ValidatedRequestEventHandler<S> | ApiGatewayEventHandler>(handler: H, opt?: MiddyfyOption & { eventSchema?: S }) {
   // NOTE: Do NOT define this function as follows:
   // function middyfy_new<S extends JSONSchema>(handler: ValidatedRequestEventHandler<S>, opt?: MiddyfyOption<S>)
   //
