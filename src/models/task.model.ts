@@ -18,12 +18,12 @@ export default class TaskModel {
   private _completed: boolean;
 
   constructor({
-    id = UUID(),
+    id = undefined,
     listId,
     description = "",
     completed = false,
   }: IProps) {
-    this._id = id;
+    this._id = id ?? UUID();
     this._listId = listId;
     this._description = description;
     this._completed = completed;
