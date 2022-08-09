@@ -1,8 +1,8 @@
 import type { AWS } from "@serverless/typescript";
 import dynamoDbTables from "./resources/dynamodb-tables";
 import cloudwatchAlarms from "./resources/cloudwatch-alarms";
-import functions from "./resources/functions";
 import actions from "./src/actions";
+import opsHandlers from "./src/ops-handlers";
 
 const serverlessConfiguration: AWS = {
   service: "todo-list",
@@ -148,7 +148,7 @@ const serverlessConfiguration: AWS = {
   },
   functions: {
     ...actions,
-    ...functions,
+    ...opsHandlers,
   },
   resources: {
     Resources: {
