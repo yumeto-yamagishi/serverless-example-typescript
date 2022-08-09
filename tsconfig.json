@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": ["es2017"],
+    "lib": ["es2020"],
     "removeComments": true,
     "moduleResolution": "node",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictNullChecks": true,
     "sourceMap": true,
-    "target": "es2017",
+    "target": "es2020",
     "outDir": "lib",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts", "serverless.ts"],
   "exclude": [
     "node_modules/**/*",
     ".serverless/**/*",
