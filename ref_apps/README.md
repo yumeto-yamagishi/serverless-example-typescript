@@ -1,7 +1,13 @@
 ここは、リファレンスアプリの生成先フォルダです。
 
-* serverlessのリファレンス生成
+* serverlessのリファレンスアプリ生成
 
     ```bash
     $ npm run generate:refapp:sls
+    ```
+
+* cdkのリファレンスアプリ生成
+
+    ```bash
+    $ npm run generate:refapp:cdk
     ```

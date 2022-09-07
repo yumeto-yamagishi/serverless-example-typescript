@@ -15,7 +15,11 @@
     "dynamodb:install": "sls dynamodb install",
     "lint": "eslint --fix",
     "prettier": "prettier -w src",
-    "generate:refapp:sls": "sls create -t aws-nodejs-typescript -p ref_apps/sls"
+    "generate:refapp:sls": "sls create -t aws-nodejs-typescript -p ref_apps/sls",
+    "generate:refapp:cdk": "run-s generate:refapp:cdk:prepare generate:refapp:cdk:exec generate:refapp:cdk:finalize",
+    "generate:refapp:cdk:prepare": "rm -df ref_apps/cdk && mkdir -p ref_apps/.build_cdk/hello",
+    "generate:refapp:cdk:exec": "cd ref_apps/.build_cdk/hello && cdk init app --language typescript",
+    "generate:refapp:cdk:finalize": "mv ref_apps/.build_cdk/hello ref_apps/cdk && rmdir ref_apps/.build_cdk"
   },
   "dependencies": {
     "@middy/core": "^3.1.1",
@@ -34,6 +38,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
+    "aws-cdk": "^2.40.0",
     "esbuild": "^0.14.54",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.5.0",
