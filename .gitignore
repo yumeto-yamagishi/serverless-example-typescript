@@ -16,5 +16,3 @@ jspm_packages
 .vscode
 .idea
 .dynamodb
-
-ref_apps

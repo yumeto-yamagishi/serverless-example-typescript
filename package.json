@@ -15,8 +15,7 @@
     "dynamodb:install": "sls dynamodb install",
     "lint": "eslint --fix",
     "prettier": "prettier -w src",
-    "generate:refs:sls": "sls create -t aws-nodejs-typescript -p ref_apps/sls",
-    "pregenerate:refs:sls": "mkdir -p ref_apps & rm -rf ref_apps/sls"
+    "generate:refapp:sls": "sls create -t aws-nodejs-typescript -p ref_apps/sls"
   },
   "dependencies": {
     "@middy/core": "^3.1.1",
